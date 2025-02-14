@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kleinanzeigen Preis-Analyse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">
+                <i class="fas fa-chart-line text-blue-600 mr-2"></i>Kleinanzeigen Preis-Analyse
+            </h1>
+        </div>
+        
+        <!-- URL Eingabeformular -->
+        <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-4 mb-6">
+            <form id="urlForm">
+                <div class="relative">
+                    <input type="url" 
+                           id="ebayUrl" 
+                           class="w-full pl-4 pr-32 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="https://www.kleinanzeigen.de/s-..." 
+                           required>
+                    <button type="submit" 
+                            class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-search mr-2"></i>Analysieren
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Lade-Animation -->
+        <div id="loading" class="hidden">
+            <div class="flex items-center justify-center space-x-2 animate-pulse">
+                <div class="w-4 h-4 bg-blue-600 rounded-full"></div>
+                <div class="w-4 h-4 bg-blue-600 rounded-full"></div>
+                <div class="w-4 h-4 bg-blue-600 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- Ergebnisbereich -->
+        <div id="results" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Linke Spalte: Statistiken und Diagramm -->
+                <div class="space-y-6">
+                    <!-- Statistik-Karten -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white rounded-xl shadow-md p-4 transform transition-all hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-gray-500">Durchschnitt</h3>
+                                <i class="fas fa-calculator text-blue-500"></i>
+                            </div>
+                            <p id="avgPrice" class="text-xl font-bold text-gray-800 mt-1">-</p>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md p-4 transform transition-all hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-gray-500">Niedrigster</h3>
+                                <i class="fas fa-arrow-down text-green-500"></i>
+                            </div>
+                            <p id="minPrice" class="text-xl font-bold text-gray-800 mt-1">-</p>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md p-4 transform transition-all hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-gray-500">Höchster</h3>
+                                <i class="fas fa-arrow-up text-red-500"></i>
+                            </div>
+                            <p id="maxPrice" class="text-xl font-bold text-gray-800 mt-1">-</p>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-md p-4 transform transition-all hover:scale-105">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium text-gray-500">Anzahl</h3>
+                                <i class="fas fa-list text-purple-500"></i>
+                            </div>
+                            <p id="listingCount" class="text-xl font-bold text-gray-800 mt-1">-</p>
+                        </div>
+                    </div>
+
+                    <!-- Preisverteilungsdiagramm -->
+                    <div class="bg-white rounded-xl shadow-lg p-4">
+                        <h2 class="text-lg font-semibold mb-3 text-gray-800">
+                            <i class="fas fa-chart-bar text-blue-600 mr-2"></i>Preisverteilung
+                        </h2>
+                        <div style="height: 180px;">
+                            <canvas id="priceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Altersverteilungsdiagramm -->
+                    <div class="bg-white rounded-xl shadow-lg p-4">
+                        <h2 class="text-lg font-semibold mb-3 text-gray-800">
+                            <i class="fas fa-clock text-blue-600 mr-2"></i>Altersverteilung
+                        </h2>
+                        <div style="height: 180px;">
+                            <canvas id="ageChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Preis-Alter Korrelation -->
+                    <div class="bg-white rounded-xl shadow-lg p-4">
+                        <h2 class="text-lg font-semibold mb-3 text-gray-800">
+                            <i class="fas fa-chart-scatter text-blue-600 mr-2"></i>Preis-Alter Korrelation
+                        </h2>
+                        <div style="height: 180px;">
+                            <canvas id="correlationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rechte Spalte: Anzeigenliste -->
+                <div class="bg-white rounded-xl shadow-lg p-4">
+                    <h2 class="text-lg font-semibold mb-3 text-gray-800">
+                        <i class="fas fa-list-ul text-blue-600 mr-2"></i>Anzeigen nach Preis sortiert
+                    </h2>
+                    <div id="listingsList" class="space-y-3 overflow-y-auto" style="max-height: calc(100vh - 280px);"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/chart.js"></script>
+    <script src="js/scraper.js"></script>
+</body>
+</html> 

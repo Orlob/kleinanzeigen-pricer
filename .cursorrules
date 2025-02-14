@@ -1,0 +1,42 @@
+# eBay Kleinanzeigen Preis-Analyse-Tool
+
+KI-Instruktionen:
+- Hinterfrag kritisch und sorgfältig.
+- wenn etwas keinen Sinn ergibt, frage nach.
+- wenn etwas nicht korrekt ist, frage nach.
+- wenn etwas nicht passt, frage nach.
+
+## Projektbeschreibung
+Ein Webtool zur Analyse von Preisen auf eBay Kleinanzeigen. Benutzer können URLs von eBay Kleinanzeigen-Suchergebnissen einfügen, um eine statistische Auswertung der Preisverteilung zu erhalten.
+
+## Hauptfunktionen
+- URL-Eingabe für eBay Kleinanzeigen Suchergebnisse
+- Web Scraping der Anzeigen (Titel, Preis, URLs)
+- Visualisierung der Preisverteilung in einem interaktiven Diagramm
+- Responsive Benutzeroberfläche
+
+## Technologie-Stack
+- HTML5
+- CSS3 mit Tailwind CSS für das Styling
+- Vanilla JavaScript für die Frontend-Logik
+- Web Scraping Funktionalität
+- Chart.js oder D3.js für die Diagramm-Darstellung
+
+## Projektstruktur
+```
+ebayPricer/
+├── index.html
+├── css/
+│   └── styles.css
+├── js/
+│   ├── scraper.js
+│   └── chart.js
+└── README.md
+```
+
+## Entwicklungsrichtlinien
+- Modularer Code
+- Responsive Design
+- Benutzerfreundliche Oberfläche
+- Fehlerbehandlung für ungültige URLs
+- Performante Datenverarbeitung 
